@@ -2,6 +2,7 @@ yarn.lock
 yarn-error.log
 npm.lock
 npm-error.log
+coverage
 
 dist
 node_modules
