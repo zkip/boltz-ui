@@ -31,12 +31,7 @@ test("walk", () => {
 	expect(walk()([1, 23, 4], [0, -19, 5])).toEqual([1, 4, 9]);
 	expect(walk()([1, 23, 4], new Array(6))).toEqual([1, 23, 4, 0, 0, 0]);
 	expect(walk()([1, 2, 3], new Array(6), [1, 2, 3], [1, 2, 3])).toEqual([
-		3,
-		6,
-		9,
-		0,
-		0,
-		0,
+		3, 6, 9, 0, 0, 0,
 	]);
 
 	expect(

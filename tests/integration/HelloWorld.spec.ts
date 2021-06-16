@@ -1,3 +1,7 @@
+/**
+ * @jest-environment jsdom
+ */
+
 import HelloWorld from "@/components/HelloWorld/HelloWorld.svelte";
 import { render } from "@testing-library/svelte";
 import "@testing-library/jest-dom";

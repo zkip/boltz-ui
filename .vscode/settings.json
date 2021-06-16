@@ -1,0 +1,10 @@
+{
+    "cSpell.words": [
+        "boltz",
+        "lcov",
+        "zrlps"
+    ],
+    "prettier.useTabs": true,
+    "prettier.tabWidth": 4,
+    "svelte.enable-ts-plugin": true
+}

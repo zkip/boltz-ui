@@ -1,4 +1,4 @@
-import { deleteKeys, entries, merge } from "../../../src/utils/object";
+import { deleteKeys, entries } from "@/utils/object";
 
 test("entries", () => {
 	{
