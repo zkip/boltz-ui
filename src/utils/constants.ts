@@ -26,3 +26,8 @@ export type HTTPMethod =
 export type URLString = string;
 
 export const pass = <T>(v: T) => v;
+
+export interface Entities<T, K> {
+	[Symbol.iterator](): IterableIterator<K>;
+	entries(): IterableIterator<[T, K]>;
+}

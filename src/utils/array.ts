@@ -1,4 +1,4 @@
-import { pass } from "./constants";
+import { Entities, pass } from "./constants";
 
 export const repeatGenerator = (v: number) => pass(v);
 
@@ -15,7 +15,7 @@ export const repeat = (count: number) => {
 
 export const joinBySpace = (...cls: string[]) => cls.filter(Boolean).join(" ");
 
-export const add = (...nums) => nums.reduce((a, b) => a + b);
+export const sum = (...numbers: number[]) => numbers.reduce((a, b) => a + b);
 
 export const walk =
 	(operation = (a = 0, b = 0) => a + b) =>
@@ -47,13 +47,23 @@ export const walk =
 		return result;
 	};
 
-export const last = (arraylike) => arraylike[arraylike.length - 1];
+export const last = <T, K>(entity: Entities<T, K>) => Array.from(entity).pop();
 
-export const first = (arraylike) => arraylike[0];
+export const first = <T, K>(entity: Entities<T, K>) =>
+	entity.entries().next().value as [T, K];
 
-export const inBound = (a, b) => (v) =>
+export const lastKey = <T, K>(entity: Entities<T, K>) => last(entity)[0];
+export const lastValue = <T, K>(entity: Entities<T, K>) => last(entity)[1];
+export const firstKey = <T, K>(entity: Entities<T, K>) => first(entity)[0];
+export const firstValue = <T, K>(entity: Entities<T, K>) => first(entity)[1];
+
+export const inBound = (a: number, b: number) => (v: number) =>
 	Math.max(Math.min(a, b), Math.min(v, Math.max(a, b)));
 
-export const inArrayBound = ({ length }) => inBound(0, length - 1);
+export const inArrayBound = <T>({ length }: ArrayLike<T>) =>
+	inBound(0, length - 1);
 
-export const firstInIter = (iterable) => iterable.entries().next().value;
+const a = new Map<string,number>()
+const b = new Set<boolean>();
+
+first(a)
