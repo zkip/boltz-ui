@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { ep } from "@/models/event";
 
 	const button_events = ep((free, reup) => {

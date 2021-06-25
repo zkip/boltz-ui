@@ -1,4 +1,5 @@
 import { Tree } from "@/models/tree";
+
 const genData = () => {
 	const data = new Tree();
 

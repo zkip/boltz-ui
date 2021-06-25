@@ -1,0 +1,13 @@
+{
+	"compilerOptions": {
+		// "moduleResolution": "node",
+		"allowSyntheticDefaultImports": false,
+		"baseUrl": ".",
+		"paths": {
+			"@/*": ["src/*"]
+		}
+	},
+
+	"include": ["src", "tests", "src/node_modules"],
+	"exclude": ["node_modules/*"]
+}

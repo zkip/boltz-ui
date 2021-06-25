@@ -1,4 +1,4 @@
-import { sleep, tasks } from "../../../src/utils/async";
+import { sleep, tasks } from "@/utils/async";
 
 test("tasks", () => {
 	let ok1 = false,
@@ -7,13 +7,13 @@ test("tasks", () => {
 		new Promise((rv) => {
 			setTimeout(() => {
 				ok1 = true;
-				rv();
+				rv(undefined);
 			}, 1000);
 		}),
 		new Promise((rv) => {
 			setTimeout(() => {
 				ok2 = true;
-				rv();
+				rv(undefined);
 			}, 1000);
 		})
 	);
@@ -22,7 +22,7 @@ test("tasks", () => {
 		setTimeout(() => {
 			expect(ok1).toEqual(true);
 			expect(ok2).toEqual(true);
-			rv();
+			rv(undefined);
 		}, 1100);
 	});
 });
@@ -40,7 +40,7 @@ test("sleep", () => {
 	return new Promise((rv) => {
 		setTimeout(() => {
 			expect(ok).toEqual(true);
-			rv();
+			rv(undefined);
 		}, 1100);
 	});
 });

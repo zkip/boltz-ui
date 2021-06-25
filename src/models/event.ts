@@ -1,7 +1,7 @@
 import { entries } from "@/utils/object";
 
-export function ep(fn) {
-	return (dom, params) => {
+export function ep(fn: Function) {
+	return (dom: HTMLElement, params?: any) => {
 		const name_map = new Map(); // Function : EventName
 		const listeners = fn(free, reup);
 		const listeners_processing = new Set();

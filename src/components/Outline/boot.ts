@@ -1,6 +1,5 @@
-import EmptyComponent from "../Empty";
+import EmptyComponent from "../Empty.svelte";
 import { writable } from "svelte/store";
-import ArrayMapper from "@/utils/indices/ArrayMapper";
 
 export function config({
 	state: { item_type = EmptyComponent, payloads = [] } = {},
@@ -9,7 +8,7 @@ export function config({
 	hierarchy_analyzer.onInserted([0, payloads.length], payloads);
 
 	return writable({
-		state: { item_type, payloads: ArrayMapper(payloads) },
+		state: { item_type, payloads },
 		hierarchy_analyzer,
 	});
 }

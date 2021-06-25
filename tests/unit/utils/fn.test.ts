@@ -1,18 +1,20 @@
-import { fallback, listen, noop } from "../../../src/utils/fn";
-import { setTopObject } from "../../../src/utils/variables";
+import { fallback, listen, noop } from "@/utils/fn";
+import { DOMEventType, setTopObject } from "@/utils/constants";
 
-function DOMEventTarget(onAdd, onRemove) {
+function DOMEventTarget(
+	onAdd: (name, fn, option) => void,
+	onRemove: (name, fn, option) => void
+) {
 	return {
 		addEventListener: onAdd,
 		removeEventListener: onRemove,
-	};
+	} as EventTarget;
 }
 
 test("listen", () => {
 	{
 		const mousedown = () => {};
 		const clean = listen(
-			"mousedown",
 			DOMEventTarget(
 				(name, fn, option) => {
 					expect(name).toEqual("mousedown");
@@ -24,11 +26,8 @@ test("listen", () => {
 					expect(fn).toEqual(mousedown);
 					expect(option).toEqual({ passive: false });
 				}
-			),
-			{
-				passive: false,
-			}
-		)(mousedown);
+			)
+		).on("mousedown", { passive: false })(mousedown);
 
 		clean();
 	}
@@ -47,11 +46,11 @@ test("listen", () => {
 					expect(fn).toEqual(mousedown);
 					expect(option).toEqual(undefined);
 
-					rv();
+					rv(undefined);
 				}
 			)
 		);
-		let clean = listen("mousedown")(mousedown);
+		const clean = listen().on("mousedown")(mousedown);
 		clean();
 	});
 });
