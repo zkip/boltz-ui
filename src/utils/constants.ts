@@ -2,7 +2,7 @@ let topObject = globalThis;
 
 export const getTopObject = () => topObject;
 
-export const setTopObject = (object) => {
+export const setTopObject = (object: typeof globalThis) => {
 	topObject = object;
 };
 
