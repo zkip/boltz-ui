@@ -33,3 +33,5 @@ export interface Entities<T, K> {
 	[Symbol.iterator](): IterableIterator<K | [T, K]>;
 	entries(): IterableIterator<[T, K]>;
 }
+
+export type Bound = [min: number, max: number];
