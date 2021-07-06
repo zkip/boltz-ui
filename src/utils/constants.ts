@@ -28,6 +28,6 @@ export type URLString = string;
 export const pass = <T>(v: T) => v;
 
 export interface Entities<T, K> {
-	[Symbol.iterator](): IterableIterator<K>;
+	[Symbol.iterator](): IterableIterator<K | [T, K]>;
 	entries(): IterableIterator<[T, K]>;
 }
