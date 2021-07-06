@@ -8,23 +8,21 @@ export const repeat = (count: number) => {
 		new Array(count).fill(0).map((_, i: number) => fn(i));
 };
 
-// export const joinWith =
-// 	(...process: Function[]) =>
-// 	(...strings: string[]) =>
-// strings.join.bind(strings);
-
 export const joinBySpace = (...cls: string[]) => cls.filter(Boolean).join(" ");
 
-export const sum = (...numbers: number[]) => numbers.reduce((a, b) => a + b);
+export const sum = (...numbers: number[]) =>
+	numbers.reduce((a = 0, b = 0) => a + b);
+export const sub = (...numbers: number[]) =>
+	numbers.reduce((a = 0, b = 0) => a - b);
 
 export const walk =
-	(operation = (a = 0, b = 0) => a + b) =>
-	(...arrays) => {
+	<T>(operation: (a: T, b: T) => T) =>
+	(...arrays: T[][]) => {
 		if (arrays.length < 1) return [];
 
 		let capacity = arrays[0].length;
 		const result = new Array(capacity);
-		let is_probed = false;
+		let isProbed = false;
 
 		for (let p = 0; p < capacity; p++) {
 			let sum = arrays[0][p];
@@ -34,20 +32,21 @@ export const walk =
 				const width = array.length;
 				sum = operation(sum, array[p]);
 
-				if (!is_probed) {
+				if (!isProbed) {
 					capacity = Math.max(capacity, width);
 				}
 			}
 
 			result[p] = sum;
 
-			is_probed = true;
+			isProbed = true;
 		}
 
 		return result;
 	};
 
-export const last = <T, K>(entity: Entities<T, K>) => Array.from(entity).pop();
+export const last = <T, K>(entity: Entities<T, K>) =>
+	Array.from(entity.entries()).pop();
 
 export const first = <T, K>(entity: Entities<T, K>) =>
 	entity.entries().next().value as [T, K];
@@ -62,8 +61,3 @@ export const inBound = (a: number, b: number) => (v: number) =>
 
 export const inArrayBound = <T>({ length }: ArrayLike<T>) =>
 	inBound(0, length - 1);
-
-const a = new Map<string,number>()
-const b = new Set<boolean>();
-
-first(a)
