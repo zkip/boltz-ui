@@ -10,6 +10,8 @@ export const EMPTY_STRING = new String();
 
 export const noop = () => {};
 
+export const isNoop = (v: any): v is typeof noop => v === noop;
+
 export type DOMEventType = string;
 
 export type HTTPMethod =
