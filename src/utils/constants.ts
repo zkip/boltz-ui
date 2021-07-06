@@ -1,4 +1,4 @@
-let topObject = window;
+let topObject = globalThis;
 
 export const getTopObject = () => topObject;
 
