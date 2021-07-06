@@ -1,12 +1,12 @@
-import { Bound, noop } from "@/utils/constants";
+import { Bound, isNotFound, noop } from "@/utils/constants";
 
 export interface TreeMeta<Data extends object> {
-	knot?: WeakSet<Data>;
-	virtual?: WeakSet<Data>;
+	knot: WeakSet<Data>;
+	virtual: WeakSet<Data>;
 }
 
 type TreeMetaOption<Data extends object> = {
-	[key in keyof TreeMeta<Data>]: boolean;
+	[key in keyof TreeMeta<Data>]?: boolean;
 };
 
 export class Tree<Data extends object> {
@@ -44,10 +44,10 @@ export class Tree<Data extends object> {
 		}
 	}
 	setMeta(data: Data, option: TreeMetaOption<Data>) {
-		if ("knot" in option) {
+		if (!isNotFound(option.knot)) {
 			this.setKnot(data, option.knot);
 		}
-		if ("virtual" in option) {
+		if (!isNotFound(option.virtual)) {
 			this.setVirtual(data, option.virtual);
 		}
 	}
@@ -112,6 +112,8 @@ export class Tree<Data extends object> {
 		const childCount = this.getChildCount(data);
 		const startPosition = this.getPosition(data);
 
+		if (isNotFound(startPosition)) return [];
+
 		const dataList = this.container.splice(startPosition, childCount + 1);
 
 		// clean maps
@@ -130,7 +132,10 @@ export class Tree<Data extends object> {
 		const subtreeRootPrevSibing = this.getPrevSibling(subtreeRoot);
 		const subtreeRootNextSibling = this.getNextSibling(subtreeRoot);
 
-		if (this.maps.relation.firstChild.get(subtreeRootParent) === data) {
+		if (
+			!isNotFound(subtreeRootParent) &&
+			this.maps.relation.firstChild.get(subtreeRootParent) === data
+		) {
 			if (subtreeRootNextSibling) {
 				this.maps.relation.firstChild.set(
 					subtreeRootParent,
@@ -140,7 +145,10 @@ export class Tree<Data extends object> {
 				this.maps.relation.firstChild.delete(subtreeRootParent);
 			}
 		}
-		if (this.maps.relation.lastChild.get(subtreeRootParent) === data) {
+		if (
+			!isNotFound(subtreeRootParent) &&
+			this.maps.relation.lastChild.get(subtreeRootParent) === data
+		) {
 			if (subtreeRootPrevSibing) {
 				this.maps.relation.lastChild.set(
 					subtreeRootParent,
@@ -176,9 +184,6 @@ export class Tree<Data extends object> {
 		return dataList;
 	}
 
-	// update subtree
-	update(data: Data, position: number, level: number) {}
-
 	removeByPosition(position: number) {
 		return this.remove(this.getByPosition(position));
 	}
@@ -188,16 +193,17 @@ export class Tree<Data extends object> {
 		level: number
 	): Data | undefined {
 		const relParentM = this.maps.relation.parent;
-		function find(target: Data) {
+		const find = (target: Data): Data | undefined => {
 			const levelTarget = this.getLevel(target);
 			if (level === levelTarget) {
 				return target;
 			} else {
-				if (relParentM.has(target)) {
-					return find(relParentM.get(target));
+				const secondTarget = relParentM.get(target);
+				if (!isNotFound(secondTarget)) {
+					return find(secondTarget);
 				}
 			}
-		}
+		};
 
 		if (position !== 0) {
 			return find(this.getByPosition(position - 1));
@@ -206,7 +212,7 @@ export class Tree<Data extends object> {
 
 	protected updatePositionOnInserted(startIndex: number, count = 1) {}
 	protected updatePositionOnRemoved(startIndex: number, count = 1) {}
-	protected updatePositionOnUpdated(index) {}
+	protected updatePositionOnUpdated(index: number) {}
 
 	getPrevSibling(data: Data) {
 		return this.maps.relation.prevSibling.get(data);
@@ -216,45 +222,48 @@ export class Tree<Data extends object> {
 	}
 
 	// only in second generation
-	getSecondFirstChild(data: Data) {
+	getFirstChild(data: Data) {
 		return this.maps.relation.firstChild.get(data);
 	}
 	// only in second generation
-	getSecondLastChild(data: Data) {
+	getLastChild(data: Data) {
 		return this.maps.relation.lastChild.get(data);
 	}
-	getFirstChild(data: Data) {
-		const { relation: relationM } = this.maps;
-		function find(data: Data) {
-			if (relationM.firstChild.has(data)) {
-				return find(relationM.firstChild.get(data));
+	getFirstChildRecursive(data: Data) {
+		const find = (data: Data): Data | undefined => {
+			const secondTarget = this.getFirstChild(data);
+			if (!isNotFound(secondTarget)) {
+				return find(secondTarget);
 			} else {
 				return data;
 			}
-		}
+		};
 		return find(data);
 	}
-	getLastChild(data: Data) {
-		const { relation: relationM } = this.maps;
-		function find(data: Data) {
-			if (relationM.lastChild.has(data)) {
-				return find(relationM.lastChild.get(data));
+	getLastChildRecursive(data: Data) {
+		const find = (data: Data): Data | undefined => {
+			const secondTarget = this.getLastChild(data);
+			if (!isNotFound(secondTarget)) {
+				return find(secondTarget);
 			} else {
 				return data;
 			}
-		}
+		};
 		return find(data);
 	}
 	getChildCount(data: Data) {
-		const firstChild = this.getSecondFirstChild(data);
-		const lastChild = this.getLastChild(data);
+		const firstChild = this.getFirstChild(data);
+		const lastChild = this.getLastChildRecursive(data);
+		if (isNotFound(firstChild) || isNotFound(lastChild)) return 0;
+
+		const firstPosition = this.getPosition(firstChild);
+		const lastPosition = this.getPosition(lastChild);
+		if (isNotFound(firstPosition) || isNotFound(lastPosition)) return 0;
 
 		const hasChildren = firstChild || lastChild;
 
-		const startPosition = hasChildren
-			? this.maps.position.get(firstChild)
-			: 0;
-		const endPosition = hasChildren ? this.maps.position.get(lastChild) : 0;
+		const startPosition = hasChildren ? firstPosition : 0;
+		const endPosition = hasChildren ? lastPosition : 0;
 		const count = endPosition - startPosition + 1;
 
 		return hasChildren ? count : 0;
@@ -276,11 +285,14 @@ export class Tree<Data extends object> {
 	getAvaliableLevelBound(position: number) {
 		const isFirst = position === 0;
 		const prevData = this.getByPosition(position - 1);
+
 		const prevLevel = this.getLevel(prevData);
+		if (isNotFound(prevLevel)) return [0, 0];
+
 		const isKnot = this.isKnot(prevData);
 		const isOvering = this.container.length === position;
 		const max = isFirst ? 0 : prevLevel + (isKnot ? 1 : 0);
-		let min = isOvering ? 0 : this.getLevelByPosition(position);
+		const min = isOvering ? 0 : this.getLevelByPosition(position);
 		return [min, max] as Bound;
 	}
 	getParent(data: Data) {
@@ -293,7 +305,7 @@ export class Tree<Data extends object> {
 	getParentChain(data: Data) {
 		const chain: Data[] = [];
 
-		let target = data;
+		let target: Data | undefined = data;
 		while ((target = this.maps.relation.parent.get(target)))
 			chain.push(target);
 
