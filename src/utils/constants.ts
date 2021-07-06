@@ -12,6 +12,10 @@ export const noop = () => {};
 
 export const isNoop = (v: any): v is typeof noop => v === noop;
 
+export type NotFound = undefined;
+
+export const isNotFound = (v: any): v is NotFound => v === undefined;
+
 export type DOMEventType = string;
 
 export type HTTPMethod =
